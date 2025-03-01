@@ -32,12 +32,9 @@ app.use('/', imageRoutes);
 app.get('/', (req, res) => {
   res.json({
     status: 200,
-    message: 'Image Gallery API is running',
+    message: '這是雙龍體育儲存圖片的地方，有任何問題請聯繫：support@ssangyongsports.eu.org,
     endpoints: {
-      upload: '/1/upload',
-      view: '/view/:id',
-      image: '/images/:id',
-      delete: '/delete/:id'
+      image: '/images/:id'
     }
   });
 });
