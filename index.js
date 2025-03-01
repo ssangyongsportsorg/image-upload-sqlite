@@ -1,11 +1,11 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import multer from 'multer';
-import { initDatabase } from './db/index.js';
+import { initDatabase } from './db.js';
 import uploadRoutes from './routes/upload.js';
-import { errorHandler } from './utils/errorHandler.js';
-import { setupExpirationJob } from './utils/expirationHandler.js';
+import imageRoutes from './routes/images.js';
+import { errorHandler } from './middleware/errorHandler.js';
+import { setupExpirationJob } from './services/expirationHandler.js';
 
 // Load environment variables
 dotenv.config();
@@ -26,6 +26,7 @@ app.use(express.urlencoded({ extended: true, limit: '32mb' }));
 
 // Routes
 app.use('/1', uploadRoutes);
+app.use('/', imageRoutes);
 
 // Main route
 app.get('/', (req, res) => {
@@ -33,7 +34,10 @@ app.get('/', (req, res) => {
     status: 200,
     message: 'Image Gallery API is running',
     endpoints: {
-      upload: '/1/upload'
+      upload: '/1/upload',
+      view: '/view/:id',
+      image: '/images/:id',
+      delete: '/delete/:id'
     }
   });
 });
