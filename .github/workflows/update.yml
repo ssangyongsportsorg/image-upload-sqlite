@@ -18,7 +18,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16'  # 可以根据需要指定 Node.js 版本
+          node-version: '16'  # 根据需要指定 Node.js 版本
 
       - name: Install dependencies
         run: |
@@ -34,5 +34,12 @@ jobs:
             sharp@^0.33.1 \
             uuid@^9.0.1
 
-      - name: Run tests
-        run: npm test  # 如果有测试脚本，运行它
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "github-actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git add package-lock.json
+          git commit -m "Install dependencies" || echo "No changes to commit"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 使用 GitHub 提供的令牌进行身份验证
