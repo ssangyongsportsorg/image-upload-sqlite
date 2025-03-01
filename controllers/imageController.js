@@ -1,4 +1,4 @@
-import { client } from '../db/index.js';
+import { client } from '../db.js';
 
 // Get image by ID
 export async function getImage(req, res, next) {
