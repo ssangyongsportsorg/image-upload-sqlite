@@ -9,7 +9,6 @@ const router = express.Router();
 const storage = multer.memoryStorage();
 const upload = multer({ 
   storage,
-  limits: { fileSize: 32 * 1024 * 1024 } // 32 MB limit
 });
 
 // Handle image upload - supports multipart/form-data, base64 or URL
