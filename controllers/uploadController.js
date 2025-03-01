@@ -1,13 +1,12 @@
-import { v4 as uuidv4 } from 'uuid';
+import { fileTypeFromBuffer } from 'file-type';
 import sharp from 'sharp';
 import axios from 'axios';
-import { fileTypeFromBuffer } from 'file-type';
-import { client } from '../db/index.js';
+import { client } from '../db.js';
 
 export async function uploadImage(req, res, next) {
   try {
     let imageBuffer, imageType, imageName, imageExt;
-    const expiration = req.query.expiration || req.body.expiration || 0;
+    const expiration = parseInt(req.query.expiration || req.body.expiration || 0);
     
     // Validate expiration time (60-15552000 seconds or 0 for no expiration)
     if (expiration !== 0 && (expiration < 60 || expiration > 15552000)) {
@@ -91,19 +90,29 @@ export async function uploadImage(req, res, next) {
     }
     
     // Get file type from buffer
-    const fileType = await fileTypeFromBuffer(imageBuffer);
-    if (!fileType || !fileType.mime.startsWith('image/')) {
+    try {
+      const fileType = await fileTypeFromBuffer(imageBuffer);
+      if (!fileType || !fileType.mime.startsWith('image/')) {
+        return res.status(400).json({
+          success: false,
+          error: {
+            message: "Uploaded file is not a valid image",
+            code: 400
+          }
+        });
+      }
+      
+      imageType = fileType.mime;
+      imageExt = fileType.ext;
+    } catch (error) {
       return res.status(400).json({
         success: false,
         error: {
-          message: "Uploaded file is not a valid image",
+          message: "Failed to determine file type",
           code: 400
         }
       });
     }
-    
-    imageType = fileType.mime;
-    imageExt = fileType.ext;
     
     // Process image with Sharp
     const metadata = await sharp(imageBuffer).metadata();
